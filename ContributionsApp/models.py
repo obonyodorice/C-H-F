@@ -1,89 +1,102 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse # Used for redirects by name
-from .models import Contribution
-from .forms import ContributionForm
+# contributions/models.py
 
-# IMPORTANT: Adjust these imports based on where your Member and Fund models are located.
-# Since you clarified you have separate 'Members' and 'Funds' apps:
+from django.db import models
+from django.utils import timezone
+
+# IMPORTANT: Importing Member from the 'Members' app and Fund from the 'Funds' app.
+# Ensure your app directories are named 'Members' and 'Funds' (case-sensitive).
 from MembersApp.models import Member
 from FundsApp.models import Fund
 
 
-def index(request):
+class Contribution(models.Model):
+    """
+    Represents an actual financial contribution made by a donor to a specific fund.
+    This model is designed to integrate with the provided views and forms for creation,
+    listing, updating, and deleting contributions.
+    """
+    PAYMENT_METHOD_CHOICES = [
+        ('cash', 'Cash'),
+        ('check', 'Check'),
+        ('online', 'Online Transfer/Card'),
+        ('mobile_money', 'Mobile Money (e.g., M-Pesa)'),
+        ('other', 'Other'),
+    ]
 
-    return redirect(reverse('contributions:list_contributions'))
+    # Foreign Key to link this contribution to a specific Member (Donor).
+    # 'on_delete=models.CASCADE' means if a Member is deleted, all their
+    # associated Contribution records will also be deleted.
+    # 'related_name' allows easy reverse lookup from a Member object (e.g., member_instance.contributions.all()).
+    donor = models.ForeignKey(
+        Member,
+        on_delete=models.CASCADE,
+        related_name='contributions',
+        help_text="The member/donor who made this contribution."
+    )
 
+    # Foreign Key to link this contribution to a specific Fund.
+    # 'on_delete=models.CASCADE' means if a Fund is deleted, all contributions
+    # made to that fund will also be deleted.
+    # 'related_name' allows easy reverse lookup from a Fund object (e.g., fund_instance.contributions.all()).
+    fund = models.ForeignKey(
+        Fund,
+        on_delete=models.CASCADE,
+        related_name='contributions',
+        help_text="The fund to which this contribution is directed."
+    )
 
-def create_contribution(request):
+    amount = models.DecimalField(
+        max_digits=15,
+        decimal_places=2,
+        help_text="The amount of the contribution."
+    )
 
-    if request.method == 'POST':
-        form = ContributionForm(request.POST)
-        if form.is_valid():
-            form.save()
-            # Redirect to the list of contributions after successful creation
-            return redirect(reverse('contributions:list_contributions'))
-    else:
-        form = ContributionForm() # Create an empty form for GET request
+    contribution_date = models.DateField(
+        default=timezone.now,
+        help_text="The date the contribution was received."
+    )
 
-    context = {
-        'form': form,
-        'form_title': 'Add New Contribution'
-    }
-    return render(request, 'contributions_app/contribution_form.html', context)
+    payment_method = models.CharField(
+        max_length=20,
+        choices=PAYMENT_METHOD_CHOICES,
+        default='cash',
+        help_text="The method used for this contribution."
+    )
 
+    check_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        help_text="Check number, if payment method is 'Check'."
+    )
 
-def update_contribution(request, id):
+    transaction_id = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text="Transaction ID for online or mobile money payments."
+    )
 
-    contribution = get_object_or_404(Contribution, id=id)
+    notes = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Any additional notes about the contribution (e.g., 'anonymous cash donation')."
+    )
 
-    if request.method == 'POST':
-        # Populate the form with submitted data and link it to the existing instance
-        form = ContributionForm(request.POST, instance=contribution)
-        if form.is_valid():
-            form.save()
-            # Redirect to the list of contributions after successful update.
-            # If you had a 'contribution_detail' view, you might redirect there instead:
-            # return redirect(reverse('contributions:contribution_detail', args=[contribution.id]))
-            return redirect(reverse('contributions:list_contributions'))
-    else:
-        # For a GET request, create a form pre-filled with the existing contribution's data
-        form = ContributionForm(instance=contribution)
+    # Fields for auditing creation and last update times.
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-    context = {
-        'form': form,
-        'contribution': contribution, # Pass the instance to the template if needed for display
-        'form_title': 'Update Contribution'
-    }
-    return render(request, 'contributions_app/contribution_form.html', context)
+    def __str__(self):
+        """
+        String representation of the Contribution object, useful for admin and debugging.
+        """
+        return f"{self.donor.name} - {self.fund.name}: {self.amount} on {self.contribution_date}"
 
-
-def delete_contribution(request, id):
-
-    contribution = get_object_or_404(Contribution, id=id)
-
-    if request.method == 'POST':
-        # Perform the deletion
-        contribution.delete()
-        # Redirect to the list of contributions after successful deletion
-        return redirect(reverse('contributions:list_contributions'))
-
-    # For a GET request, display a confirmation page
-    context = {
-        'contribution': contribution, # Pass the instance to the template for display
-        'message': f'Are you sure you want to delete the contribution from {contribution.donor.name} for {contribution.amount} to {contribution.fund.name}?'
-    }
-    return render(request, 'contributions_app/contribution_confirm_delete.html', context)
-
-
-def list_contributions(request):
-    
-    contributions = Contribution.objects.all().order_by('-contribution_date', 'donor__name')
-    context = {'contributions': contributions}
-    return render(request, 'contributions_app/contribution_list.html', context)
-
-
-def contribution_detail(request, pk):
-
-    contribution = get_object_or_404(Contribution, pk=pk)
-    context = {'contribution': contribution}
-    return render(request, 'contributions_app/contribution_detail.html', context)
+    class Meta:
+        """
+        Meta options for the Contribution model.
+        """
+        verbose_name = "Contribution"
+        verbose_name_plural = "Contributions"
+        ordering = ['-contribution_date', 'donor__name']
