@@ -1,0 +1,63 @@
+<!-- pledges_app/pledge_detail.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Confirm Delete Fund{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Pledge Details</h1>
+
+        <div class="detail-section">
+            <div class="detail-item">
+                <span class="detail-label">Donor:</span>
+                <span class="detail-value">{{ pledge.donor.name }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Fund:</span>
+                <span class="detail-value">{{ pledge.fund.name }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Pledge Amount:</span>
+                <span class="detail-value">${{ pledge.pledge_amount|floatformat:2 }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Date Pledged:</span>
+                <span class="detail-value">{{ pledge.pledge_date|date:"M d, Y" }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Fulfillment Frequency:</span>
+                <span class="detail-value">{{ pledge.get_fulfillment_frequency_display }}</span>
+            </div>
+            {% if pledge.start_date %}
+            <div class="detail-item">
+                <span class="detail-label">Start Date:</span>
+                <span class="detail-value">{{ pledge.start_date|date:"M d, Y" }}</span>
+            </div>
+            {% endif %}
+            {% if pledge.end_date %}
+            <div class="detail-item">
+                <span class="detail-label">End Date:</span>
+                <span class="detail-value">{{ pledge.end_date|date:"M d, Y" }}</span>
+            </div>
+            {% endif %}
+            <div class="detail-item">
+                <span class="detail-label">Created At:</span>
+                <span class="detail-value">{{ pledge.created_at|date:"M d, Y H:i" }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Last Updated:</span>
+                <span class="detail-value">{{ pledge.updated_at|date:"M d, Y H:i" }}</span>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <a href="{% url 'pledges:pledge_update' pledge.pk %}" class="button button-primary">
+                Edit Pledge
+            </a>
+            <a href="{% url 'pledges:pledge_list' %}" class="button button-secondary">
+                Back to List
+            </a>
+        </div>
+    </div>
+{% endblock content %}

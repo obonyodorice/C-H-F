@@ -1,0 +1,63 @@
+<!-- members_app/member_list.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Members List{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="header-section">
+            <h1>All Members</h1>
+            <a href="{% url 'members:member_create' %}" class="button button-primary">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                </svg>
+                Add New Member
+            </a>
+        </div>
+
+        {% if members %}
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Member ID</th>
+                            <th>Active</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for member in members %}
+                            <tr>
+                                <td>{{ member.name }}</td>
+                                <td>{{ member.email|default:"N/A" }}</td>
+                                <td>{{ member.phone|default:"N/A" }}</td>
+                                <td>{{ member.member_id|default:"N/A" }}</td>
+                                <td>
+                                    {% if member.is_active %}
+                                        Yes
+                                    {% else %}
+                                        No
+                                    {% endif %}
+                                </td>
+                                <td class="table-actions">
+                                    <a href="{% url 'members:member_detail' member.pk %}">View</a>
+                                    <a href="{% url 'members:member_update' member.pk %}">Edit</a>
+                                    <a href="{% url 'members:member_delete' member.pk %}" class="delete-link">Delete</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="no-contributions">
+                <p>No members found.</p>
+                <p>Start by adding a new member using the button above.</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock content %}

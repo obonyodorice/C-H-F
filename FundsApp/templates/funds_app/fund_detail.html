@@ -1,0 +1,53 @@
+<!-- funds_app/fund_detail.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Fund Details - {{ fund.name }}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Fund Details</h1>
+
+        <div class="detail-section">
+            <div class="detail-item">
+                <span class="detail-label">Name:</span>
+                <span class="detail-value">{{ fund.name }}</span>
+            </div>
+            <div class="detail-item flex-col">
+                <span class="detail-label">Description:</span>
+                <p class="detail-value">{{ fund.description|default:"No description provided." }}</p>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Active:</span>
+                <span class="detail-value">
+                    {% if fund.is_active %}
+                        Yes
+                    {% else %}
+                        No
+                    {% endif %}
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Target Amount:</span>
+                <span class="detail-value">${{ fund.target_amount|floatformat:2 }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Created At:</span>
+                <span class="detail-value">{{ fund.created_at|date:"M d, Y H:i" }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Last Updated:</span>
+                <span class="detail-value">{{ fund.updated_at|date:"M d, Y H:i" }}</span>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <a href="{% url 'funds:fund_update' fund.pk %}" class="button button-primary">
+                Edit Fund
+            </a>
+            <a href="{% url 'funds:fund_list' %}" class="button button-secondary">
+                Back to List
+            </a>
+        </div>
+    </div>
+{% endblock content %}

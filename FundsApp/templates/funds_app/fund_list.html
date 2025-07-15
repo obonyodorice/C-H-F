@@ -1,0 +1,61 @@
+<!-- funds_app/fund_list.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Funds List{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="header-section">
+            <h1>All Funds</h1>
+            <a href="{% url 'funds:fund_create' %}" class="button button-primary">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                </svg>
+                Add New Fund
+            </a>
+        </div>
+
+        {% if funds %}
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Active</th>
+                            <th>Target Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for fund in funds %}
+                            <tr>
+                                <td>{{ fund.name }}</td>
+                                <td>{{ fund.description|default:"N/A"|truncatechars:50 }}</td>
+                                <td>
+                                    {% if fund.is_active %}
+                                        Yes
+                                    {% else %}
+                                        No
+                                    {% endif %}
+                                </td>
+                                <td>${{ fund.target_amount|floatformat:2 }}</td>
+                                <td class="table-actions">
+                                    <a href="{% url 'funds:fund_detail' fund.pk %}">View</a>
+                                    <a href="{% url 'funds:fund_update' fund.pk %}">Edit</a>
+                                    <a href="{% url 'funds:fund_delete' fund.pk %}" class="delete-link">Delete</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="no-contributions">
+                <p>No funds found.</p>
+                <p>Start by adding a new fund using the button above.</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock content %}

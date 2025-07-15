@@ -1,0 +1,77 @@
+<!-- members_app/member_detail.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Member Details - {{ member.name }}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Member Details</h1>
+
+        <div class="detail-section">
+            <div class="detail-item">
+                <span class="detail-label">Name:</span>
+                <span class="detail-value">{{ member.name }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Email:</span>
+                <span class="detail-value">{{ member.email|default:"N/A" }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Phone:</span>
+                <span class="detail-value">{{ member.phone|default:"N/A" }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Address:</span>
+                <span class="detail-value">{{ member.address|default:"N/A" }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Member ID:</span>
+                <span class="detail-value">{{ member.member_id|default:"N/A" }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Active:</span>
+                <span class="detail-value">
+                    {% if member.is_active %}
+                        Yes
+                    {% else %}
+                        No
+                    {% endif %}
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Date Joined:</span>
+                <span class="detail-value">{{ member.date_joined|date:"M d, Y" }}</span>
+            </div>
+            {% if member.family_head %}
+            <div class="detail-item">
+                <span class="detail-label">Family Head:</span>
+                <span class="detail-value">{{ member.family_head.name }}</span>
+            </div>
+            {% endif %}
+            {% if member.notes %}
+            <div class="detail-item flex-col">
+                <span class="detail-label">Notes:</span>
+                <p class="detail-value">{{ member.notes }}</p>
+            </div>
+            {% endif %}
+            <div class="detail-item">
+                <span class="detail-label">Created At:</span>
+                <span class="detail-value">{{ member.created_at|date:"M d, Y H:i" }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Last Updated:</span>
+                <span class="detail-value">{{ member.updated_at|date:"M d, Y H:i" }}</span>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <a href="{% url 'members:member_update' member.pk %}" class="button button-primary">
+                Edit Member
+            </a>
+            <a href="{% url 'members:member_list' %}" class="button button-secondary">
+                Back to List
+            </a>
+        </div>
+    </div>
+{% endblock content %}

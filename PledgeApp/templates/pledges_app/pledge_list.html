@@ -1,0 +1,57 @@
+<!-- pledges_app/pledge_list.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Confirm Delete Fund{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="header-section">
+            <h1>All Pledges</h1>
+            <a href="{% url 'pledges:pledge_create' %}" class="button button-primary">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                </svg>
+                Add New Pledge
+            </a>
+        </div>
+
+        {% if pledges %}
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Donor</th>
+                            <th>Fund</th>
+                            <th>Amount</th>
+                            <th>Date Pledged</th>
+                            <th>Frequency</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pledge in pledges %}
+                            <tr>
+                                <td>{{ pledge.donor.name }}</td>
+                                <td>{{ pledge.fund.name }}</td>
+                                <td>${{ pledge.pledge_amount|floatformat:2 }}</td>
+                                <td>{{ pledge.pledge_date|date:"M d, Y" }}</td>
+                                <td>{{ pledge.get_fulfillment_frequency_display }}</td>
+                                <td class="table-actions">
+                                    <a href="{% url 'pledges:pledge_detail' pledge.pk %}">View</a>
+                                    <a href="{% url 'pledges:pledge_update' pledge.pk %}">Edit</a>
+                                    <a href="{% url 'pledges:pledge_delete' pledge.pk %}" class="delete-link">Delete</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="no-contributions"> {# Reusing 'no-contributions' style for consistency #}
+                <p>No pledges found.</p>
+                <p>Start by adding a new pledge using the button above.</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock content %}

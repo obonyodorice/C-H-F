@@ -1,0 +1,35 @@
+<!-- funds_app/fund_confirm_delete.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Confirm Delete Fund{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Confirm Deletion</h1>
+
+        <p class="text-message">
+            Are you sure you want to delete fund: {{ fund.name }}?
+        </p>
+
+        <div class="warning-box">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.542 2.705-1.542 3.47 0L19.223 10.5c.765 1.542-.31 3.49-2.035 3.49H2.812c-1.724 0-2.79-1.948-2.035-3.49L8.257 3.099zM10 12a1 1 0 100-2 1 1 0 000 2zm-1-4a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd" />
+            </svg>
+            <div>
+                <h3>Warning</h3>
+                <p>This action cannot be undone. All data related to this fund will be permanently removed.</p>
+            </div>
+        </div>
+
+        <form method="post" class="button-group">
+            {% csrf_token %}
+            <button type="submit" class="button button-danger">
+                Yes, Delete
+            </button>
+            <a href="{% url 'funds:fund_list' %}" class="button button-secondary">
+                Cancel
+            </a>
+        </form>
+    </div>
+{% endblock content %}
