@@ -4,9 +4,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse # Used for redirects by name
 from .models import Contribution
 from .forms import ContributionForm
-
-# IMPORTANT: Importing Member from the 'Members' app and Fund from the 'Funds' app.
-# Ensure your app directories are named 'Members' and 'Funds' (case-sensitive).
 from MembersApp.models import Member
 from FundsApp.models import Fund
 
