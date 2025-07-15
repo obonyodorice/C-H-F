@@ -1,0 +1,57 @@
+<!-- contributions_app/contribution_list.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contributions List{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="header-section">
+            <h1>All Contributions</h1>
+            <a href="{% url 'contributions:create_contribution' %}" class="button button-primary">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                </svg>
+                Add New Contribution
+            </a>
+        </div>
+
+        {% if contributions %}
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Donor</th>
+                            <th>Fund</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Payment Method</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for contribution in contributions %}
+                            <tr>
+                                <td>{{ contribution.donor.name }}</td>
+                                <td>{{ contribution.fund.name }}</td>
+                                <td>${{ contribution.amount|floatformat:2 }}</td>
+                                <td>{{ contribution.contribution_date|date:"M d, Y" }}</td>
+                                <td>{{ contribution.get_payment_method_display }}</td>
+                                <td class="table-actions">
+                                    <a href="{% url 'contributions:update_contribution' contribution.id %}">Edit</a>
+                                    <a href="{% url 'contributions:delete_contribution' contribution.id %}" class="delete-link">Delete</a>
+                                    <a href="{% url 'contributions:contribution_detail' contribution.id %}">View</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="no-contributions">
+                <p>No contributions found.</p>
+                <p>Start by adding a new contribution using the button above.</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock content %}

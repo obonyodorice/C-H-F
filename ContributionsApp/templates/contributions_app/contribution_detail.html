@@ -1,0 +1,69 @@
+<!-- contributions_app/contribution_detail.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contribution Details - {{ contribution.donor.name }}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Contribution Details</h1>
+
+        <div class="detail-section">
+            <div class="detail-item">
+                <span class="detail-label">Donor:</span>
+                <span class="detail-value">{{ contribution.donor.name }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Fund:</span>
+                <span class="detail-value">{{ contribution.fund.name }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Amount:</span>
+                <span class="detail-value">${{ contribution.amount|floatformat:2 }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Date:</span>
+                <span class="detail-value">{{ contribution.contribution_date|date:"M d, Y" }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Payment Method:</span>
+                <span class="detail-value">{{ contribution.get_payment_method_display }}</span>
+            </div>
+            {% if contribution.check_number %}
+            <div class="detail-item">
+                <span class="detail-label">Check Number:</span>
+                <span class="detail-value">{{ contribution.check_number }}</span>
+            </div>
+            {% endif %}
+            {% if contribution.transaction_id %}
+            <div class="detail-item">
+                <span class="detail-label">Transaction ID:</span>
+                <span class="detail-value">{{ contribution.transaction_id }}</span>
+            </div>
+            {% endif %}
+            {% if contribution.notes %}
+            <div class="detail-item flex-col">
+                <span class="detail-label">Notes:</span>
+                <p class="detail-value">{{ contribution.notes }}</p>
+            </div>
+            {% endif %}
+            <div class="detail-item">
+                <span class="detail-label">Created At:</span>
+                <span class="detail-value">{{ contribution.created_at|date:"M d, Y H:i" }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Last Updated:</span>
+                <span class="detail-value">{{ contribution.updated_at|date:"M d, Y H:i" }}</span>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <a href="{% url 'contributions:update_contribution' contribution.id %}" class="button button-primary">
+                Edit Contribution
+            </a>
+            <a href="{% url 'contributions:list_contributions' %}" class="button button-secondary">
+                Back to List
+            </a>
+        </div>
+    </div>
+{% endblock content %}
