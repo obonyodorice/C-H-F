@@ -1,0 +1,429 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MY CHURCH APP{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    {% block extra_css %}{% endblock %}
+    {% block extra_meta %}{% endblock %}
+</head>
+<body>
+    <header class="app-header">
+        <div class="container">
+            <div class="brand-section">
+                <h1 class="brand-title">
+                    <a href="{% url 'contributions:list_contributions' %}" class="brand-link">
+                        MY CHURCH APP
+                    </a>
+                </h1>
+                <p class="brand-subtitle">MANAGING FAITH, BUILDING COMMUNITY</p>
+            </div>
+            
+            <nav class="main-nav">
+                <a href="{% url 'contributions:list_contributions' %}" class="nav-link" data-page="contributions">
+                    <span class="nav-text">Contributions</span>
+                </a>
+                <a href="{% url 'funds:fund_list' %}" class="nav-link" data-page="funds">
+                    <span class="nav-text">Funds</span>
+                </a>
+                <a href="{% url 'members:member_list' %}" class="nav-link" data-page="members">
+                    <span class="nav-text">Members</span>
+                </a>
+                <a href="{% url 'pledges:pledge_list' %}" class="nav-link" data-page="pledges">
+                    <span class="nav-text">Pledges</span>
+                </a>
+            </nav>
+
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <main id="content">
+        {% block breadcrumb %}
+        <div class="breadcrumb-container">
+            <nav class="breadcrumb">
+                <a href="{% url 'contributions:list_contributions' %}" class="breadcrumb-link">Home</a>
+                <span class="breadcrumb-separator">›</span>
+                <span class="breadcrumb-current">{% block breadcrumb_current %}Current Page{% endblock %}</span>
+            </nav>
+        </div>
+        {% endblock %}
+
+        <div class="container">
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="message message-{{ message.tags }}">
+                            <span class="message-text">{{ message }}</span>
+                            <button class="message-close" onclick="this.parentElement.remove()">×</button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% block content %}
+            <div class="welcome-section">
+                <h1>Welcome to My Church App</h1>
+                <p>Manage your church's contributions, funds, members, and pledges all in one place.</p>
+            </div>
+            {% endblock content %}
+        </div>
+    </main>
+
+    <footer class="app-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'contributions:list_contributions' %}">Contributions</a></li>
+                        <li><a href="{% url 'funds:fund_list' %}">Funds</a></li>
+                        <li><a href="{% url 'members:member_list' %}">Members</a></li>
+                        <li><a href="{% url 'pledges:pledge_list' %}">Pledges</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Contact Us</h4>
+                    <p>info@mychurch.org</p>
+                    <p>(555) 123-4567</p>
+                    <p>123 Faith Street, City, State 12345</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Our Mission</h4>
+                    <p>Spreading love, building community, and serving God through faithful stewardship.</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; {% now "Y" %} My Church App. All rights reserved. | Built with ❤️ for our faith community</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMobileMenu() {
+            const nav = document.querySelector('.main-nav');
+            nav.classList.toggle('mobile-active');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                const dataPage = link.getAttribute('data-page');
+                // Check if the currentPath includes the data-page value
+                if (dataPage && currentPath.includes(dataPage)) {
+                    link.classList.add('active');
+                }
+            });
+
+            const messages = document.querySelectorAll('.message');
+            messages.forEach(message => {
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    setTimeout(() => message.remove(), 300);
+                }, 5000);
+            });
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
+
+<style>
+/* Additional styles to enhance the existing CSS */
+
+/* Brand Section */
+.brand-section {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.brand-title {
+    font-size: 2.2em;
+    margin: 0 0 5px 0;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.brand-link {
+    color: #ffffff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.brand-link:hover {
+    color: #3498db;
+}
+
+.brand-subtitle {
+    font-size: 0.9em;
+    color: #bdc3c7;
+    margin: 0;
+    font-style: italic;
+}
+
+/* Navigation enhancements */
+.nav-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    position: relative;
+}
+
+.nav-icon {
+    font-size: 1.2em;
+}
+
+.nav-text {
+    font-size: 0.9em;
+}
+
+.nav-link.active {
+    background-color: #3498db;
+    color: #ffffff;
+}
+
+.nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid #3498db;
+}
+
+/* Mobile menu toggle */
+.mobile-menu-toggle {
+    display: none;
+    flex-direction: column;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+}
+
+.mobile-menu-toggle span {
+    width: 25px;
+    height: 3px;
+    background-color: #ffffff;
+    margin: 3px 0;
+    transition: 0.3s;
+}
+
+/* Breadcrumb */
+.breadcrumb-container {
+    background-color: #f8f9fa;
+    padding: 10px 0;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.breadcrumb {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px;
+    font-size: 0.9em;
+}
+
+.breadcrumb-link {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.breadcrumb-link:hover {
+    text-decoration: underline;
+}
+
+.breadcrumb-separator {
+    margin: 0 10px;
+    color: #6c757d;
+}
+
+.breadcrumb-current {
+    color: #495057;
+    font-weight: 500;
+}
+
+/* Messages/Alerts */
+.messages {
+    margin-bottom: 20px;
+}
+
+.message {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    font-size: 0.95em;
+    transition: opacity 0.3s ease;
+}
+
+.message-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.message-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.message-info {
+    background-color: #cce7ff;
+    color: #004085;
+    border: 1px solid #b8daff;
+}
+
+.message-icon {
+    margin-right: 10px;
+    font-size: 1.1em;
+}
+
+.message-text {
+    flex: 1;
+}
+
+.message-close {
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    cursor: pointer;
+    color: inherit;
+    padding: 0 5px;
+    margin-left: 10px;
+}
+
+/* Footer enhancements */
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-bottom: 20px;
+}
+
+.footer-section h4 {
+    color: #3498db;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 8px;
+}
+
+.footer-links a {
+    color: #bdc3c7;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: #3498db;
+}
+
+.footer-section p {
+    color: #bdc3c7;
+    margin: 5px 0;
+    font-size: 0.9em;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid #34495e;
+}
+
+/* Welcome section */
+.welcome-section {
+    text-align: center;
+    padding: 50px 20px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    margin-bottom: 30px;
+}
+
+.welcome-section h1 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+.welcome-section p {
+    color: #6c757d;
+    font-size: 1.1em;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .mobile-menu-toggle {
+        display: flex;
+    }
+    
+    .main-nav {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: #2c3e50;
+        flex-direction: column;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .main-nav.mobile-active {
+        display: flex;
+    }
+    
+    .nav-link {
+        flex-direction: row;
+        justify-content: flex-start;
+        padding: 15px;
+        width: 100%;
+    }
+    
+    .nav-icon {
+        margin-right: 10px;
+    }
+    
+    .brand-title {
+        font-size: 1.8em;
+    }
+    
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+</style>
